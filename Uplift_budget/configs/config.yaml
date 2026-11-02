@@ -1,0 +1,26 @@
+seed: 42
+
+data:
+  url: "http://www.minethatdata.com/Kevin_Hillstrom_MineThatData_E-MailAnalytics_DataMiningChallenge_2008.03.20.csv"
+  raw_path: data/raw/hillstrom.csv
+  processed_dir: data/processed
+  test_size: 0.30
+  val_size: 0.20          # part du train utilisée pour choisir le learner
+
+treatment_col: segment
+control_label: "No E-Mail"
+arms: ["Mens E-Mail", "Womens E-Mail"] 
+outcome: conversion
+
+model:
+  candidates: [s_learner, t_learner, x_learner]   # learners causaux en compétition
+  baselines: [response_model]                      # baseline non causale (pour comparaison)
+
+business:
+  value_per_conversion: 30.0      # marge brute par conversion (EUR)
+  cost_per_contact:
+    "Mens E-Mail": 0.10
+    "Womens E-Mail": 0.10
+  budget: 600.0                   # budget campagne sur le jeu de test (EUR)
+  max_per_arm: null               # ex: {"Mens E-Mail": 4000}
+  solver_time_limit: 60
