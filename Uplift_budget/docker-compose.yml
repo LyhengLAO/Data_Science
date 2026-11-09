@@ -1,0 +1,28 @@
+# 1) docker compose --profile train run --rm trainer   -> produit models/ reports/ data/processed/
+# 2) docker compose up --build                          -> API :8000 + dashboard :8501
+x-app: &app
+  build: .
+  volumes:
+    - ./data:/app/data
+    - ./models:/app/models
+    - ./reports:/app/reports
+
+services:
+  trainer:
+    <<: *app
+    profiles: ["train"]
+    command: sh -c "python -m train && python -m run_optimization && python -m report"
+
+  api:
+    <<: *app
+    ports: ["8000:8000"]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      retries: 5
+
+  app:
+    <<: *app
+    ports: ["8501:8501"]
+    command: streamlit run streamlit_app/app.py --server.port 8501 --server.address 0.0.0.0
+    depends_on: [api]

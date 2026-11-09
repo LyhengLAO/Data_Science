@@ -1,0 +1,12 @@
+FROM python:3.11-slim
+ENV PYTHONPATH=/app/src PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY configs ./configs
+COPY src ./src
+COPY streamlit_app ./streamlit_app
+RUN useradd -m app && mkdir -p data/raw data/processed models reports && chown -R app /app
+USER app
+EXPOSE 8000 8501
+CMD ["uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"]

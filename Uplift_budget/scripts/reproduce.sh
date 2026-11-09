@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 export PYTHONPATH=src
 step() { printf '\n\033[1m━━ %s\033[0m\n' "$*"; }
 
-[ "${UPLIFT_SYNTHETIC:-0}" = "1" ] && echo "⚠ DONNÉES SYNTHÉTIQUES : résultats de démonstration uniquement" || { step "P1/P3 · données réelles"; python -m uplift.data; }
+[ "${UPLIFT_SYNTHETIC:-0}" = "1" ] && echo "⚠ DONNÉES SYNTHÉTIQUES : résultats de démonstration uniquement" || { step "P1/P3 · données réelles"; python -m data; }
 
 step "P2  · notebook 01 — EDA & vérification de la randomisation"
 python scripts/run_notebooks.py 01_eda.ipynb
@@ -19,7 +19,7 @@ python scripts/run_notebooks.py 02_modeling_prototype.ipynb
 step "P5  · tests modèles + évaluation (vérité terrain, Qini, uplift vs réponse)"
 python -m pytest -q tests/test_models.py tests/test_evaluation.py
 step "P6  · pipeline d'entraînement (sélection validation → évaluation test)"
-python -m uplift.train
+python -m train
 step "P7  · notebook 03 — prototypage de l'optimisation"
 python scripts/run_notebooks.py 03_optimization_prototype.ipynb
 step "P8  · tests optimisation (budget, contraintes, LP ≥ glouton)"

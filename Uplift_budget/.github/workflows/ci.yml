@@ -1,0 +1,13 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11", cache: pip }
+      - run: pip install -r requirements-dev.txt
+      - run: python -m ipykernel install --user --name python3
+      - run: pytest -q                      # tests unitaires + API
+      - run: UPLIFT_SYNTHETIC=1 pytest -m slow -q   # notebooks exécutés de bout en bout
